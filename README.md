@@ -14,7 +14,7 @@
 
 ---
 
-## 🎯 Overview
+##  Overview
 
 This repository contains a **complete refactoring** of the offers resolver, transforming it from an expensive query-time computation model to a precomputed eligibility model.
 
@@ -30,7 +30,7 @@ This repository contains a **complete refactoring** of the offers resolver, tran
 
 ---
 
-## ⚠️ The Problem
+##  The Problem
 
 ### Current Implementation Issues
 
@@ -64,7 +64,7 @@ The existing `offers` resolver performs **expensive computation at query-time**:
 
 ---
 
-## ✅ The Solution
+##  The Solution
 
 ### Core Strategy: Precomputed Eligibility
 
@@ -99,7 +99,7 @@ READ PATH (when user queries):
 
 ---
 
-## 🏗️ Architecture
+##  Architecture
 
 ### System Diagram
 
@@ -189,7 +189,7 @@ CREATE INDEX idx_active_user_eligibilities
 
 ---
 
-## 🚀 Implementation Steps
+##  Implementation Steps
 
 ### Phase 1: Setup Infrastructure 
 ### Step 2: Run the Demo
@@ -241,7 +241,7 @@ model UserOfferEligibility {
 ```
 
 
-## 🧪 Testing
+##  Testing
 
 ### Run Unit Tests
 
@@ -319,7 +319,7 @@ export default function () {
 
 ---
 
-## 📊 Monitoring
+##  Monitoring
 
 ### Key Metrics to Track
 
@@ -408,7 +408,7 @@ groups:
 
 ---
 
-## 🔄 Rollback Plan
+##  Rollback Plan
 
 ### If Issues Arise
 
@@ -450,7 +450,7 @@ Rollback if any of these occur:
 
 ---
 
-## 📈 Success Criteria
+##  Success Criteria
 
 ### After 1 Week
 
@@ -468,7 +468,7 @@ Rollback if any of these occur:
 
 ---
 
-## 🎓 Key Learnings
+##  Key Learnings
 
 ### When to Use This Pattern
 
@@ -478,7 +478,7 @@ Rollback if any of these occur:
 - Scalability is critical
 - Eventual consistency is acceptable
 
-❌ **Don't use when:**
+ **Don't use when:**
 - Real-time accuracy is critical (e.g., inventory)
 - Write-heavy workloads
 - Simple query logic
