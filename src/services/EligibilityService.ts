@@ -36,8 +36,8 @@ export class EligibilityService {
         offerId,
         merchantId,
         isEligible: true,
-        validFrom: offer.startDate,
-        validUntil: offer.endDate,
+        validFrom: offer.startDate || new Date(), // ✅ FIX: Handle null dates
+        validUntil: offer.endDate || new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // ✅ FIX: Default to 1 year
         lastUpdated: new Date(),
       }))
     );

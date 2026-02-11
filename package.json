@@ -3,12 +3,14 @@
   "version": "1.0.0",
   "description": "- [Overview](#overview) - [The Problem](#the-problem) - [The Solution](#the-solution) - [Architecture](#architecture) - [Implementation Steps](#implementation-steps) - [Testing](#testing) - [Deployment Strategy](#deployment-strategy) - [Monitoring](#monitoring) - [Rollback Plan](#rollback-plan)",
   "main": "index.js",
-  "scripts": {
+"scripts": {
     "devStart": "node --import tsx src/index.ts",
     "dev": "tsx watch src/index.ts",
     "seed": "tsx prisma/seed.ts",
     "db:reset": "npx prisma migrate reset && npm run seed",
-    "test": "jest --runInBand"
+    "test": "NODE_OPTIONS='--experimental-vm-modules --no-warnings' jest --detectOpenHandles",
+    "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --watch",
+    "test:coverage": "NODE_OPTIONS=--experimental-vm-modules jest --coverage"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -21,12 +23,16 @@
   "author": "",
   "license": "ISC",
   "type": "module",
+  "jest":{
+    "preset": "ts-jest/presets/default-esm"
+  },
   "bugs": {
     "url": "https://github.com/clementmw/fusion_resolver/issues"
   },
   "homepage": "https://github.com/clementmw/fusion_resolver#readme",
   "devDependencies": {
     "@graphql-tools/schema": "^10.0.31",
+    "@jest/globals": "^30.2.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^4.17.25",
     "@types/ioredis": "^4.28.10",
