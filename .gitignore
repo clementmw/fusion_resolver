@@ -1,0 +1,10 @@
+.env
+node_modules/
+dist/
+coverage/
+*.log
+/generated/prisma
+models.py
+package-lock.json
+
+

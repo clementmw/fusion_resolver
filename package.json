@@ -1,0 +1,62 @@
+{
+  "name": "fusion_resolver",
+  "version": "1.0.0",
+  "description": "- [Overview](#overview) - [The Problem](#the-problem) - [The Solution](#the-solution) - [Architecture](#architecture) - [Implementation Steps](#implementation-steps) - [Testing](#testing) - [Deployment Strategy](#deployment-strategy) - [Monitoring](#monitoring) - [Rollback Plan](#rollback-plan)",
+  "main": "index.js",
+  "scripts": {
+    "devStart": "node --import tsx src/index.ts",
+    "dev": "tsx watch src/index.ts",
+    "seed": "tsx prisma/seed.ts",
+    "db:reset": "npx prisma migrate reset && npm run seed",
+    "test": "jest --runInBand"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/clementmw/fusion_resolver.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/clementmw/fusion_resolver/issues"
+  },
+  "homepage": "https://github.com/clementmw/fusion_resolver#readme",
+  "devDependencies": {
+    "@graphql-tools/schema": "^10.0.31",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^4.17.25",
+    "@types/ioredis": "^4.28.10",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^25.2.2",
+    "@types/nodemon": "^1.19.6",
+    "@types/pg": "^8.16.0",
+    "@types/supertest": "^6.0.3",
+    "jest": "^30.2.0",
+    "nodemon": "^3.1.11",
+    "prisma": "^7.3.0",
+    "supertest": "^7.2.2",
+    "ts-jest": "^29.4.6",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@apollo/server": "^5.4.0",
+    "@bull-board/api": "^6.17.0",
+    "@bull-board/express": "^6.17.0",
+    "@prisma/adapter-pg": "^7.3.0",
+    "@prisma/client": "^7.3.0",
+    "body-parser": "^1.20.4",
+    "bullmq": "^5.67.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.2.4",
+    "express": "^4.22.1",
+    "graphql": "^16.12.0",
+    "ioredis": "^5.9.2",
+    "pg": "^8.18.0"
+  }
+}
