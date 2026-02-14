@@ -17,41 +17,126 @@ export const resolvers = {
         where: { id: args.userId },
       });
     },
+
+    offersByMerchant: async (_: any, args: { merchantId: string }) => {
+      const offers = await prisma.cashbackConfiguration.findMany({
+        where: { merchantId: args.merchantId },
+        include: {
+          Outlets: {
+            select: {
+              id: true,
+              name: true,
+              description: true,
+              isActive: true,
+            },
+          },
+        },
+      });
+
+      return offers.map(offer => ({
+        id: offer.id,
+        name: offer.name,
+        startDate: offer.startDate?.toISOString() || null,
+        endDate: offer.endDate?.toISOString() || null,
+        isActive: offer.isActive,
+        merchantId: offer.merchantId,
+        eligibleCustomerTypes: offer.eligibleCustomerTypes,
+        outlets: offer.Outlets,
+        netCashbackBudget: Number(offer.netCashbackBudget),
+        usedCashbackBudget: Number(offer.usedCashbackBudget),
+      }));
+    },
   },
 
   Mutation: {
-    createCashbackOffer: async (_: any, args: { input: any }) => {
+    createOffer: async (_: any, args: { input: any }) => {
       const { input } = args;
 
-      // 1. Save to database
-      const offer = await prisma.cashbackConfiguration.create({
-        data: {
-          id: input.id,
-          name: input.name,
-          merchantId: input.merchantId,
-          eligibleCustomerTypes: input.eligibleCustomerTypes,
-          startDate: new Date(input.startDate),
-          endDate: new Date(input.endDate),
-          isActive: true,
-        },
-      });
+      if (input.offerType === 'CASHBACK') {
+        const offer = await prisma.cashbackConfiguration.create({
+          data: {
+            name: input.name,
+            merchantId: input.merchantId,
+            eligibleCustomerTypes: input.eligibleCustomerTypes,
+            startDate: new Date(input.startDate),
+            endDate: new Date(input.endDate),
+            isActive: true,
+            netCashbackBudget: input.netCashbackBudget || 0,
+            usedCashbackBudget: 0,
+            Outlets: {
+              connect: input.outletIds.map(id => ({ id })),
+            },
+          },
+        });
 
-      // 2. Publish to queue for background processing
-      await eligibilityQueue.add('compute-eligibility', {
-        offerChangeEvent: {
-          eventType: 'created',
+        await eligibilityQueue.add('compute-eligibility', {
+          offerChangeEvent: {
+            eventType: 'created',
+            offerType: 'Cashback',
+            offerId: offer.id,
+            merchantId: offer.merchantId,
+            timestamp: new Date(),
+          },
+          priority: 'high', //can change priority here
+          retryCount: 0,
+        });
+
+        return {
+          id: offer.id,
+          name: offer.name,
           offerType: 'Cashback',
-          offerId: offer.id,
+          startDate: offer.startDate?.toISOString(),
+          endDate: offer.endDate?.toISOString(),
           merchantId: offer.merchantId,
-          timestamp: new Date(),
-        },
-        priority: 'high',
-        retryCount: 0,
-      });
+          isActive: offer.isActive,
+          outlets: [],
+        };
+      } 
+      
+      else if (input.offerType === 'EXCLUSIVE') {
+        const offer = await prisma.exclusiveOffer.create({
+          data: {
+            name: input.name,
+            description: input.description || '',
+            merchantId: input.merchantId,
+            eligibleCustomerTypes: input.eligibleCustomerTypes,
+            startDate: new Date(input.startDate),
+            endDate: new Date(input.endDate),
+            isActive: true,
+            netOfferBudget: input.netCashbackBudget || 0,
+            usedOfferBudget: 0,
+            Outlets: {
+              connect: input.outletIds.map(id => ({ id })),
+            },
+          },
+        });
 
-      console.log(`📤 Published eligibility job for offer: ${offer.id}`);
+        await eligibilityQueue.add('compute-eligibility', {
+          offerChangeEvent: {
+            eventType: 'created',
+            offerType: 'Exclusive',
+            offerId: offer.id,
+            merchantId: offer.merchantId,
+            timestamp: new Date(),
+          },
+          priority: 'high',
+          retryCount: 0,
+        });
 
-      return offer;
+        return {
+          id: offer.id,
+          name: offer.name,
+          offerType: 'Exclusive',
+          description: offer.description,
+          startDate: offer.startDate.toISOString(),
+          endDate: offer.endDate.toISOString(),
+          merchantId: offer.merchantId,
+          isActive: offer.isActive,
+          outlets: [],
+        };
+      }
+
+      throw new Error('Invalid offer type');
     },
 
     updateLoyaltyPoints: async (_: any, args: { userId: string; points: number }) => {

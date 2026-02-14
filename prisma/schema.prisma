@@ -12,7 +12,7 @@ datasource db {
 }
 
 model Outlet {
-  id                      String                    @id
+  id                      String                    @id @default(uuid())
   name                    String
   description             String?
   isActive                Boolean
@@ -22,10 +22,11 @@ model Outlet {
   ExclusiveOffers         ExclusiveOffer[]
   Review                  Review?                   @relation(fields: [reviewId], references: [id])
   reviewId                String?                   @unique
+  createdAt   DateTime @default(now())
 }
 
 model Merchant {
-  id                      String                    @id
+  id                      String                    @id  @default(uuid())
   businessName            String
   status                  String
   category                String
@@ -34,10 +35,12 @@ model Merchant {
   ExclusiveOffers         ExclusiveOffer[]
   Outlets                 Outlet[]
   CustomerTypes           CustomerType[]
+  createdAt   DateTime @default(now())
+
 }
 
 model CashbackConfiguration {
-  id                    String    @id
+  id                    String    @id @default(uuid())
   name                  String
   startDate             DateTime?
   endDate               DateTime?
@@ -51,10 +54,12 @@ model CashbackConfiguration {
   reviewId              String?   @unique
   netCashbackBudget     Decimal   @default(0.0)
   usedCashbackBudget    Decimal   @default(0.0)
+  createdAt   DateTime @default(now())
+
 }
 
 model ExclusiveOffer {
-  id                    String    @id
+  id                    String    @id  @default(uuid())
   name                  String
   description           String
   startDate             DateTime
@@ -69,10 +74,12 @@ model ExclusiveOffer {
   reviewId              String?   @unique
   netOfferBudget        Decimal   @default(0.0)
   usedOfferBudget       Decimal   @default(0.0)
+  createdAt   DateTime @default(now())
+
 }
 
 model LoyaltyProgram {
-  id                    String              @id
+  id                    String              @id @default(uuid())
   name                  String
   isActive              Boolean             @default(true)
   merchantId            String?             @unique
@@ -82,10 +89,12 @@ model LoyaltyProgram {
   reviewId              String?             @unique
   pointsUsedInPeriod    Decimal             @default(0)
   pointsIssuedLimit     Decimal?
+  createdAt   DateTime @default(now())
+
 }
 
 model LoyaltyTier {
-  id              String         @id
+  id              String         @id @default(uuid())
   name            String
   isActive        Boolean        @default(true)
   deletedAt       DateTime?
@@ -94,24 +103,30 @@ model LoyaltyTier {
   LoyaltyProgram  LoyaltyProgram @relation(fields: [loyaltyProgramId], references: [id])
   Review          Review?        @relation(fields: [reviewId], references: [id])
   reviewId        String?        @unique
+  createdAt   DateTime @default(now())
+
 }
 
 model CustomerType {
-  id          String   @id
+  id          String   @id @default(uuid())
   userId      String
   merchantId  String
   type        String
   Merchant    Merchant @relation(fields: [merchantId], references: [id])
+  createdAt   DateTime @default(now())
+
 }
 
 model Review {
-  id                     String                  @id
+  id                     String                  @id @default(uuid())
   status                 String
   CashbackConfiguration  CashbackConfiguration?
   ExclusiveOffer         ExclusiveOffer?
   LoyaltyProgram         LoyaltyProgram?
   LoyaltyTier            LoyaltyTier?
   Outlet                 Outlet?
+  createdAt   DateTime @default(now())
+
 }
 
 model UserOfferEligibility {

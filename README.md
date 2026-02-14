@@ -283,7 +283,6 @@ Data Integrity
   "query": "mutation CreateOffer($input: CreateCashbackInput!) { createCashbackOffer(input: $input) { id name } }",
   "variables": {
     "input": {
-      "id": "cashback-new",
       "name": "New Offer",
       "merchantId": "merchant-001",
       "eligibleCustomerTypes": ["Gold", "Platinum"],

@@ -18,28 +18,31 @@ export const typeDefs = `#graphql
     isActive: Boolean!
   }
 
+  type MerchantOffer {
+    id: String!
+    name: String!
+    startDate: String
+    endDate: String
+    isActive: Boolean!
+    merchantId: String!
+    eligibleCustomerTypes: [String!]!
+    outlets: [Outlet!]!
+    netCashbackBudget: Float!
+    usedCashbackBudget: Float!
+  }
+
   type Query {
-    # Get offers for a specific user at an outlet
     offers(userId: String!, outletId: String): [Offer!]!
-    
-    # Get user's loyalty points
     userLoyaltyPoints(userId: String!): UserLoyaltyPoints
+    
+    offersByMerchant(merchantId: String!): [MerchantOffer!]!
   }
 
   type Mutation {
-    # Create a cashback offer (triggers background eligibility computation)
-    createCashbackOffer(input: CreateCashbackInput!): CashbackOffer!
-    
-    # Update user loyalty points
+    createOffer(input: CreateOfferInput!): Offer!
     updateLoyaltyPoints(userId: String!, points: Float!): UserLoyaltyPoints!
   }
 
-  type CashbackOffer {
-    id: String!
-    name: String!
-    eligibleCustomerTypes: [String!]!
-    merchantId: String!
-  }
 
   type UserLoyaltyPoints {
     id: String!
@@ -47,12 +50,23 @@ export const typeDefs = `#graphql
     lastUpdated: String!
   }
 
-  input CreateCashbackInput {
-    id: String!
+
+
+  input CreateOfferInput {
     name: String!
+    offerType: OfferType!
     merchantId: String!
     eligibleCustomerTypes: [String!]!
     startDate: String!
     endDate: String!
+    outletIds: [String!]!
+    netCashbackBudget: Float
+    description: String
+  }
+
+  enum OfferType {
+    CASHBACK
+    EXCLUSIVE
+    LOYALTY
   }
 `;
