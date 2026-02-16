@@ -55,7 +55,7 @@ export class EligibilityWorker {
     );
 
     // Invalidate cache for affected users
-    await this.cacheService.invalidate(`offers:*:merchant:${offerChangeEvent.merchantId}`);
+    await this.cacheService.invalidate(`offers:*:merchants:*${offerChangeEvent.merchantId}*`);
     
     console.log(`Cache invalidated for merchant: ${offerChangeEvent.merchantId}`);
   }

@@ -8,8 +8,13 @@ const offersResolver = new OptimizedOffersResolver(prisma, cacheService);
 
 export const resolvers = {
   Query: {
-    offers: async (_: any, args: { userId: string; outletId?: string }) => {
-      return await offersResolver.getOffers(args.userId, args.outletId);
+    offers: async (_: any, args: { userId: string; 
+      outletId?: string;   
+      offerType?: string;
+      limit?: number;
+      page?: number;
+    }) => {
+      return await offersResolver.getOffers(args.userId, args.outletId, args.offerType, args.limit || 100 ,args.page || 1);
     },
 
     userLoyaltyPoints: async (_: any, args: { userId: string }) => {
@@ -18,9 +23,13 @@ export const resolvers = {
       });
     },
 
+    // cashback and exclusive offers by merchant :-can be switched up to be one function instead of 2 
     offersByMerchant: async (_: any, args: { merchantId: string }) => {
       const offers = await prisma.cashbackConfiguration.findMany({
         where: { merchantId: args.merchantId },
+        orderBy: {
+          createdAt: 'desc',
+        },
         include: {
           Outlets: {
             select: {
@@ -136,7 +145,31 @@ export const resolvers = {
         };
       }
 
+
       throw new Error('Invalid offer type');
+    },
+
+    deactivateOffer: async(_: any, args:{offerId: string}) =>{
+      // deactivate offer
+      const offer =  await prisma.cashbackConfiguration.update({
+        where: { id: args.offerId },
+        data: { isActive: false },
+      });
+      // delete if in eligibility records
+      await prisma.userOfferEligibility.deleteMany({
+        where: { offerId: args.offerId }
+      })
+      // invalidate cache for merchant users
+    await cacheService.invalidate(`offers:*:merchants:*${offer.merchantId}*`);
+
+    return{
+      id:offer.id,
+      name:offer.name,
+      merchantId:offer.merchantId,
+      offerType:'Cashback',
+      isActive: false,
+      outlets:[]
+    }
     },
 
     updateLoyaltyPoints: async (_: any, args: { userId: string; points: number }) => {

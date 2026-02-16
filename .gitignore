@@ -6,5 +6,6 @@ coverage/
 /generated/prisma
 models.py
 package-lock.json
+*.json
 
 

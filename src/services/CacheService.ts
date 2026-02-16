@@ -18,9 +18,16 @@ export class CacheService {
   }
 
   async invalidate(pattern: string): Promise<void> {
-    const keys = await this.redis.keys(pattern);
-    if (keys.length > 0) {
-      await this.redis.del(...keys);
+    try{
+
+      const keys = await this.redis.keys(pattern);
+      if (keys.length > 0) {
+        await this.redis.del(...keys);
+      }else{
+        console.log(`No keys found for pattern: ${pattern}`);
+      }
+    } catch (error) {
+      console.error('Cache invalidation error:', error);
     }
   }
 

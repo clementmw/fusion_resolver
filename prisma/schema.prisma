@@ -107,7 +107,7 @@ model LoyaltyTier {
 
 }
 
-model CustomerType {
+  model CustomerType {
   id          String   @id @default(uuid())
   userId      String
   merchantId  String
@@ -132,7 +132,7 @@ model Review {
 model UserOfferEligibility {
   id          String   @id @default(uuid())
   userId      String
-  outletId    String
+  outletId    String   // can be switched up to array 
   offerType   String
   offerId     String
   merchantId  String
@@ -142,11 +142,27 @@ model UserOfferEligibility {
   lastUpdated DateTime @default(now())
   createdAt   DateTime @default(now())
 
-  @@index([userId, validFrom, validUntil], name: "idx_user_eligibility_lookup")
+  // Unique constraint
+  @@unique([userId, outletId, offerType, offerId], name: "unique_user_outlet_offer")
+  
+  
+  // Primary query: Get offers for user that are currently valid
+  @@index([userId, isEligible, validFrom, validUntil], name: "idx_user_active_offers")
+  
+  // Filter by user + offer type
+  @@index([userId, offerType, validFrom, validUntil], name: "idx_user_offertype_dates")
+  
+  // Filter by user + outlet
+  @@index([userId, outletId, validFrom, validUntil], name: "idx_user_outlet_dates")
+  
+  // Admin queries: Get all eligibility for an offer
   @@index([offerId, offerType], name: "idx_offer_eligibility")
-  @@index([outletId, offerType], name: "idx_outlet_offer_type")
-  @@index([merchantId], name: "idx_merchant_eligibility")
-  @@index([userId, isEligible], name: "idx_active_user_eligibilities")
+  
+  // Recomputation: Find stale records
+  @@index([lastUpdated], name: "idx_last_updated")
+  
+  // Merchant analytics
+  @@index([merchantId, offerType], name: "idx_merchant_offers")
   
   @@map("user_offer_eligibility")
 }

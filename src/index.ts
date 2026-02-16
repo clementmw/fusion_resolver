@@ -70,15 +70,15 @@ export async function createApp() {
 
   // Start server
 const serverInstance = app.listen(PORT, () => {
-    console.log(`🚀 Apollo Server running on http://localhost:${PORT}/graphql`);
-    console.log(`📈 Bull Board available at http://localhost:${PORT}/admin/queues`);
+    console.log(` Apollo Server running on http://localhost:${PORT}/graphql`);
+    console.log(` Bull Board available at http://localhost:${PORT}/admin/queues`);
   });
 
   
     
   //   // Graceful shutdown
   // process.on("SIGINT", async () => {
-  //   console.log("\n🛑 Shutting down gracefully...");
+  //   console.log("\n Shutting down gracefully...");
   //   await server.stop();
   //   await worker.stop();
   //   await prisma.$disconnect();

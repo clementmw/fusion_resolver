@@ -13,7 +13,8 @@
     "test:coverage": "NODE_OPTIONS=--experimental-vm-modules jest --coverage"
   },
   "prisma": {
-    "seed": "tsx prisma/seed.ts"
+    "seed": "tsx prisma/seed.ts",
+    "seed2": "tsx prisma/seed2.ts" 
   },
   "repository": {
     "type": "git",

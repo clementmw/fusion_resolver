@@ -9,6 +9,8 @@ export const typeDefs = `#graphql
     isActive: Boolean!
     merchantId: String!
     outlets: [Outlet!]!
+    validFrom: String
+    validUntil: String
   }
 
   type Outlet {
@@ -16,6 +18,13 @@ export const typeDefs = `#graphql
     name: String!
     description: String
     isActive: Boolean!
+  }
+
+  type OffersResponse {
+    offers: [Offer!]!
+    total: Int!
+    hasMore: Boolean!
+    page: Int!
   }
 
   type MerchantOffer {
@@ -32,7 +41,15 @@ export const typeDefs = `#graphql
   }
 
   type Query {
-    offers(userId: String!, outletId: String): [Offer!]!
+    offers(
+    userId: String!, 
+    outletId: String,
+    offerType: String
+    limit: Int = 10
+    page:  Int = 1
+    
+    ): OffersResponse!
+    
     userLoyaltyPoints(userId: String!): UserLoyaltyPoints
     
     offersByMerchant(merchantId: String!): [MerchantOffer!]!
@@ -41,6 +58,7 @@ export const typeDefs = `#graphql
   type Mutation {
     createOffer(input: CreateOfferInput!): Offer!
     updateLoyaltyPoints(userId: String!, points: Float!): UserLoyaltyPoints!
+    deactivateOffer(offerId: String!): Offer!
   }
 
 
